@@ -167,7 +167,13 @@ export function cleanNode(node: Owner) {
     node.owned = null;
   }
   if (node.cleanups) {
-    for (let i = 0; i < node.cleanups.length; i++) node.cleanups[i]();
+    for (let i = 0; i < node.cleanups.length; i++) {
+      try {
+        node.cleanups[i]();
+      } catch (err) {
+        setTimeout(() => { throw err; });
+      }
+    }
     node.cleanups = null;
   }
 }

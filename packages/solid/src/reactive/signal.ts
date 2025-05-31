@@ -1694,7 +1694,13 @@ function cleanNode(node: Owner) {
   }
 
   if (node.cleanups) {
-    for (i = node.cleanups.length - 1; i >= 0; i--) node.cleanups[i]();
+    for (i = node.cleanups.length - 1; i >= 0; i--) {
+      try {
+        node.cleanups[i]();
+      } catch (err) {
+        setTimeout(() => { throw err; });
+      }
+    }
     node.cleanups = null;
   }
   if (Transition && Transition.running) (node as Computation<any>).tState = 0;
